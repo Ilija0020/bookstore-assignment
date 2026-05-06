@@ -10,6 +10,6 @@ namespace BookstoreApplication.Models
         public string Description { get; set; }
         [Range(1900, 2100, ErrorMessage = "Start year must be between 1900 and 2100.")]
         public int StartYear { get; set; }
-        public List<AuthorAward> AuthorAwards { get; set; } = new List<AuthorAward>();
+        public ICollection<AuthorAward> AuthorAwards { get; set; } = new List<AuthorAward>();
     }
 }
