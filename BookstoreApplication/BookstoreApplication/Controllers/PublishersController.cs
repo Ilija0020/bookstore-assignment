@@ -59,9 +59,12 @@ namespace BookstoreApplication.Controllers
             {
                 return NotFound();
             }
+            existingPublisher.Name = publisher.Name;
+            existingPublisher.Address = publisher.Address;
+            existingPublisher.Website = publisher.Website;
 
-            _publisherRepo.UpdatePublisher(publisher);
-            return Ok(publisher);
+            _publisherRepo.UpdatePublisher(existingPublisher);
+            return Ok(existingPublisher);
         }
 
         // DELETE api/publishers/5

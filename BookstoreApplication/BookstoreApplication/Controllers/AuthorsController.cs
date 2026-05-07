@@ -58,8 +58,12 @@ namespace BookstoreApplication.Controllers
                 return NotFound();
             }
 
-            _authorRepo.UpdateAuthor(author);
-            return Ok(author);
+            existingAuthor.FullName = author.FullName;
+            existingAuthor.Biography = author.Biography;
+            existingAuthor.DateOfBirth = author.DateOfBirth;
+
+            _authorRepo.UpdateAuthor(existingAuthor);
+            return Ok(existingAuthor);
         }
 
         // DELETE api/authors/5

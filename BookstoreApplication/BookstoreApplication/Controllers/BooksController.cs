@@ -71,6 +71,12 @@ namespace BookstoreApplication.Controllers
                 return BadRequest();
             }
 
+            var existingBook = _bookRepo.GetBookById(id);
+            if (existingBook == null)
+            {
+                return NotFound();
+            }
+
             // izmena knjige je moguca ako je izabran postojeći autor
             var author = _authorRepo.GetAuthorById(book.AuthorId);
             if (author == null)
@@ -85,8 +91,15 @@ namespace BookstoreApplication.Controllers
                 return BadRequest();
             }
 
-            Book updatedBook = _bookRepo.UpdateBook(book);
-            return Ok(book);
+            existingBook.Title = book.Title;
+            existingBook.PageCount = book.PageCount;
+            existingBook.PublishedDate = book.PublishedDate;
+            existingBook.ISBN = book.ISBN;
+            existingBook.AuthorId = book.AuthorId;
+            existingBook.PublisherId = book.PublisherId;
+
+            _bookRepo.UpdateBook(existingBook);
+            return Ok(existingBook);
         }
 
         // DELETE api/books/5

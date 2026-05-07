@@ -58,8 +58,12 @@ namespace BookstoreApplication.Controllers
                 return NotFound();
             }
 
-            _awardRepo.UpdateAward(award);
-            return Ok(award);
+            existingAward.Name = award.Name;
+            existingAward.Description = award.Description;
+            existingAward.StartYear = award.StartYear;
+
+            _awardRepo.UpdateAward(existingAward);
+            return Ok(existingAward);
         }
 
         // DELETE api/awards/5
