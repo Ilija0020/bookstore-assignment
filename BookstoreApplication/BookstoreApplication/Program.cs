@@ -1,4 +1,5 @@
 using BookstoreApplication.Data;
+using BookstoreApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<AuthorRepo>();
+builder.Services.AddScoped<PublisherRepo>();
+builder.Services.AddScoped<BookRepo>();
+builder.Services.AddScoped<AwardRepo>();
 
 
 builder.Services.AddCors(options =>
