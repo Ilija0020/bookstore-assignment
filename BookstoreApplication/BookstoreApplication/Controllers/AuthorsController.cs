@@ -18,16 +18,16 @@ namespace BookstoreApplication.Controllers
         }
         // GET: api/authors
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(_authorRepo.GetAllAuthors());
+            return Ok(await _authorRepo.GetAllAuthorsAsync());
         }
 
         // GET api/authors/5
         [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
+        public async Task<IActionResult> GetOneAsync(int id)
         {
-            var author = _authorRepo.GetAuthorById(id);
+            var author = await _authorRepo.GetAuthorByIdAsync(id);
             if (author == null)
             {
                 return NotFound();
@@ -37,22 +37,22 @@ namespace BookstoreApplication.Controllers
 
         // POST api/authors
         [HttpPost]
-        public IActionResult Post(Author author)
+        public async Task<IActionResult> PostAsync(Author author)
         {
-            Author createdAuthor = _authorRepo.AddAuthor(author);
+            Author createdAuthor = await _authorRepo.AddAuthorAsync(author);
             return Ok(createdAuthor);
         }
 
         // PUT api/authors/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Author author)
+        public async Task<IActionResult> PutAsync(int id, Author author)
         {
             if (id != author.Id)
             {
                 return BadRequest();
             }
 
-            var existingAuthor = _authorRepo.GetAuthorById(id);
+            var existingAuthor =await _authorRepo.GetAuthorByIdAsync(id);
             if (existingAuthor == null)
             {
                 return NotFound();
@@ -62,16 +62,16 @@ namespace BookstoreApplication.Controllers
             existingAuthor.Biography = author.Biography;
             existingAuthor.DateOfBirth = author.DateOfBirth;
 
-            _authorRepo.UpdateAuthor(existingAuthor);
+            await _authorRepo.UpdateAuthorAsync(existingAuthor);
             return Ok(existingAuthor);
         }
 
         // DELETE api/authors/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var author = _authorRepo.DeleteAuthor(id);
-            if (!author)
+            var success = await _authorRepo.DeleteAuthorAsync(id);
+            if (!success)
             {
                 return NotFound();
             }

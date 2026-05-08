@@ -1,6 +1,6 @@
-﻿using BookstoreApplication.Data;
+using BookstoreApplication.Data;
 using BookstoreApplication.Models;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositories
 {
@@ -14,39 +14,39 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public List<Publisher> GetAllPublishers()
+        public async Task<List<Publisher>> GetAllPublishersAsync()
         {
-            return _context.Publishers.ToList();
+            return await _context.Publishers.ToListAsync();
         }
 
-        public Publisher? GetPublisherById(int id)
+        public async Task<Publisher?> GetPublisherByIdAsync(int id)
         {
-            return _context.Publishers.FirstOrDefault(p => p.Id == id);
+            return await _context.Publishers.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public Publisher AddPublisher(Publisher publisher)
+        public async Task<Publisher> AddPublisherAsync(Publisher publisher)
         {
             _context.Publishers.Add(publisher);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return publisher;
         }
 
-        public Publisher UpdatePublisher(Publisher publisher)
+        public async Task<Publisher> UpdatePublisherAsync(Publisher publisher)
         {
             _context.Publishers.Update(publisher);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return publisher;
         }
 
-        public bool DeletePublisher(int id)
+        public async Task<bool> DeletePublisherAsync(int id)
         {
-            Publisher? publisher = _context.Publishers.Find(id);
+            Publisher? publisher = await _context.Publishers.FindAsync(id);
             if (publisher == null)
             {
                 return false;
             }
             _context.Publishers.Remove(publisher);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
     }

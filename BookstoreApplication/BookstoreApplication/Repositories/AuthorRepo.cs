@@ -1,5 +1,6 @@
 ﻿using BookstoreApplication.Data;
 using BookstoreApplication.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositories
 {
@@ -12,39 +13,39 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public List<Author> GetAllAuthors()
+        public async Task<List<Author>> GetAllAuthorsAsync()
         {
-            return _context.Authors.ToList();
+            return await _context.Authors.ToListAsync();
         }
 
-        public Author? GetAuthorById(int id)
+        public async Task<Author?> GetAuthorByIdAsync(int id)
         {
-            return _context.Authors.FirstOrDefault(a => a.Id == id);
+            return await _context.Authors.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public Author AddAuthor(Author author)
+        public async Task<Author> AddAuthorAsync(Author author)
         {
             _context.Authors.Add(author);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync ();
             return author;
         }
 
-        public Author UpdateAuthor(Author author)
+        public async Task<Author> UpdateAuthorAsync(Author author)
         {
             _context.Authors.Update(author);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return author;
         }
 
-        public bool DeleteAuthor(int id)
+        public async Task<bool> DeleteAuthorAsync(int id)
         {
-            Author? author = _context.Authors.Find(id);
+            Author? author = await _context.Authors.FindAsync(id);
             if (author == null)
             {
                 return false;
             }
             _context.Authors.Remove(author);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
     }

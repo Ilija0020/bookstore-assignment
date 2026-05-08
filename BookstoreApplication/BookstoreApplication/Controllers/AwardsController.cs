@@ -1,4 +1,4 @@
-﻿using BookstoreApplication.Models;
+using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,16 +18,16 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/awards
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(_awardRepo.GetAllAwards());
+            return Ok(await _awardRepo.GetAllAwardsAsync());
         }
 
         // GET api/awards/5
         [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
+        public async Task<IActionResult> GetOneAsync(int id)
         {
-            var award = _awardRepo.GetByAwardId(id);
+            var award = await _awardRepo.GetByAwardIdAsync(id);
             if (award == null)
             {
                 return NotFound();
@@ -37,22 +37,22 @@ namespace BookstoreApplication.Controllers
 
         // POST api/awards
         [HttpPost]
-        public IActionResult Post(Award award)
+        public async Task<IActionResult> PostAsync(Award award)
         {
-            Award createdAward = _awardRepo.AddAward(award);
+            Award createdAward = await _awardRepo.AddAwardAsync(award);
             return Ok(createdAward);
         }
 
         // PUT api/awards/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Award award)
+        public async Task<IActionResult> PutAsync(int id, Award award)
         {
             if (id != award.Id)
             {
                 return BadRequest();
             }
 
-            var existingAward = _awardRepo.GetByAwardId(id);
+            var existingAward = await _awardRepo.GetByAwardIdAsync(id);
             if (existingAward == null)
             {
                 return NotFound();
@@ -62,16 +62,16 @@ namespace BookstoreApplication.Controllers
             existingAward.Description = award.Description;
             existingAward.StartYear = award.StartYear;
 
-            _awardRepo.UpdateAward(existingAward);
+            await _awardRepo.UpdateAwardAsync(existingAward);
             return Ok(existingAward);
         }
 
         // DELETE api/awards/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var award = _awardRepo.DeleteAward(id);
-            if (!award)
+            var success = await _awardRepo.DeleteAwardAsync(id);
+            if (!success)
             {
                 return NotFound();
             }

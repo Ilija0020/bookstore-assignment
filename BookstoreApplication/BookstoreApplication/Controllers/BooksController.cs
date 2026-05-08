@@ -1,4 +1,4 @@
-﻿using BookstoreApplication.Data;
+using BookstoreApplication.Data;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -23,16 +23,16 @@ namespace BookstoreApplication.Controllers
         }
         // GET: api/books
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(_bookRepo.GetAllBooks());
+            return Ok(await _bookRepo.GetAllBooksAsync());
         }
 
         // GET api/books/5
         [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
+        public async Task<IActionResult> GetOneAsync(int id)
         {
-            var book = _bookRepo.GetBookById(id);
+            var book = await _bookRepo.GetBookByIdAsync(id);
             if (book == null)
             {
                 return NotFound();
@@ -42,50 +42,50 @@ namespace BookstoreApplication.Controllers
 
         // POST api/books
         [HttpPost]
-        public IActionResult Post(Book book)
+        public async Task<IActionResult> PostAsync(Book book)
         {
             // kreiranje knjige je moguće ako je izabran postojeći autor
-            var author = _authorRepo.GetAuthorById(book.AuthorId);
+            var author = await _authorRepo.GetAuthorByIdAsync(book.AuthorId);
             if (author == null)
             {
                 return BadRequest();
             }
 
             // kreiranje knjige je moguće ako je izabran postojeći izdavač
-            var publisher = _publisherRepo.GetPublisherById(book.PublisherId);
+            var publisher = await _publisherRepo.GetPublisherByIdAsync(book.PublisherId);
             if (publisher == null)
             {
                 return BadRequest();
             }
 
-            Book createdBook = _bookRepo.AddBook(book);
+            Book createdBook = await _bookRepo.AddBookAsync(book);
             return Ok(createdBook);
         }
 
         // PUT api/books/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Book book)
+        public async Task<IActionResult> PutAsync(int id, Book book)
         {
             if (id != book.Id)
             {
                 return BadRequest();
             }
 
-            var existingBook = _bookRepo.GetBookById(id);
+            var existingBook = await _bookRepo.GetBookByIdAsync(id);
             if (existingBook == null)
             {
                 return NotFound();
             }
 
             // izmena knjige je moguca ako je izabran postojeći autor
-            var author = _authorRepo.GetAuthorById(book.AuthorId);
+            var author = await _authorRepo.GetAuthorByIdAsync(book.AuthorId);
             if (author == null)
             {
                 return BadRequest();
             }
 
             // izmena knjige je moguca ako je izabran postojeći izdavač
-            var publisher = _publisherRepo.GetPublisherById(book.PublisherId);
+            var publisher = await _publisherRepo.GetPublisherByIdAsync(book.PublisherId);
             if (publisher == null)
             {
                 return BadRequest();
@@ -98,16 +98,16 @@ namespace BookstoreApplication.Controllers
             existingBook.AuthorId = book.AuthorId;
             existingBook.PublisherId = book.PublisherId;
 
-            _bookRepo.UpdateBook(existingBook);
+            await _bookRepo.UpdateBookAsync(existingBook);
             return Ok(existingBook);
         }
 
         // DELETE api/books/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var book = _bookRepo.DeleteBook(id);
-            if (!book)
+            var success = await _bookRepo.DeleteBookAsync(id);
+            if (!success)
             {
                 return NotFound();
             }
