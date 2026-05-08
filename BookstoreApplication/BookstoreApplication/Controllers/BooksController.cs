@@ -44,6 +44,7 @@ namespace BookstoreApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync(Book book)
         {
+            book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
             // kreiranje knjige je moguće ako je izabran postojeći autor
             var author = await _authorRepo.GetAuthorByIdAsync(book.AuthorId);
             if (author == null)
@@ -70,6 +71,7 @@ namespace BookstoreApplication.Controllers
             {
                 return BadRequest();
             }
+            book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
 
             var existingBook = await _bookRepo.GetBookByIdAsync(id);
             if (existingBook == null)
