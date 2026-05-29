@@ -1,6 +1,5 @@
-﻿using BookstoreApplication.Data;
-using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
+﻿using BookstoreApplication.Models;
+using BookstoreApplication.Services;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,23 +10,23 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly AuthorRepo _authorRepo;
-        public AuthorsController(AuthorRepo authorRepo)
+        private readonly AuthorService _authorService;
+        public AuthorsController(AuthorService authorService)
         {
-            _authorRepo = authorRepo;
+            _authorService = authorService;
         }
         // GET: api/authors
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(await _authorRepo.GetAllAuthorsAsync());
+            return Ok(await _authorService.GetAllAuthorsAsync());
         }
 
         // GET api/authors/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            var author = await _authorRepo.GetAuthorByIdAsync(id);
+            var author = await _authorService.GetAuthorByIdAsync(id);
             if (author == null)
             {
                 return NotFound();
@@ -39,7 +38,7 @@ namespace BookstoreApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync(Author author)
         {
-            Author createdAuthor = await _authorRepo.AddAuthorAsync(author);
+            Author createdAuthor = await _authorService.AddAuthorAsync(author);
             return Ok(createdAuthor);
         }
 
@@ -52,25 +51,20 @@ namespace BookstoreApplication.Controllers
                 return BadRequest();
             }
 
-            var existingAuthor =await _authorRepo.GetAuthorByIdAsync(id);
-            if (existingAuthor == null)
+            var updatedAuthor = await _authorService.UpdateAuthorAsync(id, author);
+            if (updatedAuthor == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            existingAuthor.FullName = author.FullName;
-            existingAuthor.Biography = author.Biography;
-            existingAuthor.DateOfBirth = author.DateOfBirth;
-
-            await _authorRepo.UpdateAuthorAsync(existingAuthor);
-            return Ok(existingAuthor);
+            return Ok(updatedAuthor);
         }
 
         // DELETE api/authors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var success = await _authorRepo.DeleteAuthorAsync(id);
+            var success = await _authorService.DeleteAuthorAsync(id);
             if (!success)
             {
                 return NotFound();

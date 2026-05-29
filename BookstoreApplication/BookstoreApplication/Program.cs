@@ -1,5 +1,6 @@
 using BookstoreApplication.Data;
 using BookstoreApplication.Repositories;
+using BookstoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,10 @@ builder.Services.AddScoped<PublisherRepo>();
 builder.Services.AddScoped<BookRepo>();
 builder.Services.AddScoped<AwardRepo>();
 
+builder.Services.AddScoped<AuthorService>();
+builder.Services.AddScoped<BookService>();
+builder.Services.AddScoped<PublisherService>();
+builder.Services.AddScoped<AwardService>();
 
 builder.Services.AddCors(options =>
 {
