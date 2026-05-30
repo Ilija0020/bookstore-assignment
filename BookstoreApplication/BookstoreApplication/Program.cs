@@ -1,4 +1,5 @@
 using BookstoreApplication.Data;
+using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +16,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<AuthorRepo>();
-builder.Services.AddScoped<PublisherRepo>();
-builder.Services.AddScoped<BookRepo>();
-builder.Services.AddScoped<AwardRepo>();
+builder.Services.AddScoped<IAuthorRepo, AuthorRepo>();
+builder.Services.AddScoped<IPublisherRepo, PublisherRepo>();
+builder.Services.AddScoped<IBookRepo, BookRepo>();
+builder.Services.AddScoped<IAwardRepo, AwardRepo>();
 
-builder.Services.AddScoped<AuthorService>();
-builder.Services.AddScoped<BookService>();
-builder.Services.AddScoped<PublisherService>();
-builder.Services.AddScoped<AwardService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IPublisherService, PublisherService>();
+builder.Services.AddScoped<IAwardService, AwardService>();
 
 builder.Services.AddCors(options =>
 {

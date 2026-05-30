@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositories
 {
-    public class BookRepo
+    public class BookRepo : IBookRepo
     {
 
         private AppDbContext _context;
@@ -19,7 +19,7 @@ namespace BookstoreApplication.Repositories
                 .Include(b => b.Author)
                 .Include(b => b.Publisher)
                 .ToListAsync();
-                
+
         }
 
         public async Task<Book?> GetBookByIdAsync(int id)

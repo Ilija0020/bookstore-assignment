@@ -3,11 +3,11 @@ using BookstoreApplication.Repositories;
 
 namespace BookstoreApplication.Services
 {
-    public class PublisherService
+    public class PublisherService : IPublisherService
     {
-        private readonly PublisherRepo _publisherRepo;
+        private readonly IPublisherRepo _publisherRepo;
 
-        public PublisherService(PublisherRepo publisherRepo)
+        public PublisherService(IPublisherRepo publisherRepo)
         {
             _publisherRepo = publisherRepo;
         }
@@ -31,7 +31,7 @@ namespace BookstoreApplication.Services
         {
             if (id != publisher.Id)
             {
-                return null; 
+                return null;
             }
             var existingPublisher = await _publisherRepo.GetPublisherByIdAsync(id);
             if (existingPublisher == null)

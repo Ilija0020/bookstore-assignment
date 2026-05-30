@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositories
 {
-    public class AuthorRepo
+    public class AuthorRepo : IAuthorRepo
     {
         private AppDbContext _context;
 
@@ -26,7 +26,7 @@ namespace BookstoreApplication.Repositories
         public async Task<Author> AddAuthorAsync(Author author)
         {
             _context.Authors.Add(author);
-            await _context.SaveChangesAsync ();
+            await _context.SaveChangesAsync();
             return author;
         }
 

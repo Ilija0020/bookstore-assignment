@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositories
 {
-    public class AwardRepo
+    public class AwardRepo : IAwardRepo
     {
         private AppDbContext _context;
 

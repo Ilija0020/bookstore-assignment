@@ -3,11 +3,11 @@ using BookstoreApplication.Repositories;
 
 namespace BookstoreApplication.Services
 {
-    public class AwardService
+    public class AwardService : IAwardService
     {
-        private readonly AwardRepo _awardRepo;
+        private readonly IAwardRepo _awardRepo;
 
-        public AwardService(AwardRepo awardRepo)
+        public AwardService(IAwardRepo awardRepo)
         {
             _awardRepo = awardRepo;
         }
@@ -31,7 +31,7 @@ namespace BookstoreApplication.Services
         {
             if (id != award.Id)
             {
-                return null; 
+                return null;
             }
             var existingAward = await _awardRepo.GetByAwardIdAsync(id);
             if (existingAward == null)

@@ -3,11 +3,11 @@ using BookstoreApplication.Repositories;
 
 namespace BookstoreApplication.Services
 {
-    public class AuthorService
+    public class AuthorService : IAuthorService
     {
-        private readonly AuthorRepo _authorRepo;
+        private readonly IAuthorRepo _authorRepo;
 
-        public AuthorService(AuthorRepo authorRepo)
+        public AuthorService(IAuthorRepo authorRepo)
         {
             _authorRepo = authorRepo;
         }
@@ -46,8 +46,8 @@ namespace BookstoreApplication.Services
         }
 
         public async Task<bool> DeleteAuthorAsync(int id)
-            {
-                return await _authorRepo.DeleteAuthorAsync(id);
-            }
+        {
+            return await _authorRepo.DeleteAuthorAsync(id);
+        }
     }
 }

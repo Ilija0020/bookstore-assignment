@@ -3,13 +3,13 @@ using BookstoreApplication.Repositories;
 
 namespace BookstoreApplication.Services
 {
-    public class BookService
+    public class BookService : IBookService
     {
-        private readonly BookRepo _bookRepo;
-        private readonly AuthorRepo _authorRepo;
-        private readonly PublisherRepo _publisherRepo;
+        private readonly IBookRepo _bookRepo;
+        private readonly IAuthorRepo _authorRepo;
+        private readonly IPublisherRepo _publisherRepo;
 
-        public BookService(BookRepo bookRepo, AuthorRepo authorRepo, PublisherRepo publisherRepo)
+        public BookService(IBookRepo bookRepo, IAuthorRepo authorRepo, IPublisherRepo publisherRepo)
         {
             _bookRepo = bookRepo;
             _authorRepo = authorRepo;
