@@ -1,4 +1,5 @@
 ﻿using BookstoreApplication.Models;
+using BookstoreApplication.Services.DTOs;
 
 namespace BookstoreApplication.Services
 {
@@ -6,8 +7,8 @@ namespace BookstoreApplication.Services
     {
         Task<Book?> AddBookAsync(Book book);
         Task<bool> DeleteBookAsync(int id);
-        Task<List<Book>> GetAllBooksAsync();
-        Task<Book?> GetBookByIdAsync(int id);
+        Task<List<BookDto>> GetAllBooksAsync();
+        Task<BookDetailsDto?> GetBookByIdAsync(int id);
         Task<Book?> UpdateBookAsync(int id, Book book);
     }
 }
