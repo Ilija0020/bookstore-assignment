@@ -5,6 +5,7 @@ using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
 using BookstoreApplication.Services.Mappers;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,13 @@ builder.Services.AddAutoMapper(cfg =>
 });
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddCors(options =>
 {
