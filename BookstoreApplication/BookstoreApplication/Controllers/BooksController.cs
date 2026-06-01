@@ -30,10 +30,6 @@ namespace BookstoreApplication.Controllers
         public async Task<IActionResult> GetOneAsync(int id)
         {
             var book = await _bookService.GetBookByIdAsync(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
             return Ok(book);
         }
 
@@ -42,11 +38,7 @@ namespace BookstoreApplication.Controllers
         public async Task<IActionResult> PostAsync(Book book)
         {
            var createdBook = await _bookService.AddBookAsync(book);
-            if (createdBook == null)
-            {
-                return BadRequest();
-            }
-            return Ok(createdBook);
+           return Ok(createdBook);
         }
 
         // PUT api/books/5
@@ -55,13 +47,9 @@ namespace BookstoreApplication.Controllers
         {
             if (id != book.Id)
             {
-                return BadRequest();
+                return BadRequest("ID in path does not match ID in body.");
             }
             var updatedBook = await _bookService.UpdateBookAsync(id, book);
-            if (updatedBook == null)
-            {
-                return NotFound("Knjiga nije pronadjena ili su autor/izdavac nepostojeci.");
-            }
             return Ok(updatedBook);
         }
 
@@ -69,11 +57,7 @@ namespace BookstoreApplication.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var success = await _bookService.DeleteBookAsync(id);
-            if (!success)
-            {
-                return NotFound();
-            }
+            await _bookService.DeleteBookAsync(id);
             return NoContent();
         }
     }

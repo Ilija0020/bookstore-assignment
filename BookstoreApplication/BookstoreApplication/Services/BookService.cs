@@ -2,6 +2,7 @@
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services.DTOs;
+using BookstoreApplication.Services.Exceptions;
 
 namespace BookstoreApplication.Services
 {
@@ -33,47 +34,47 @@ namespace BookstoreApplication.Services
             var book = await _bookRepo.GetBookByIdAsync(id);
             if (book == null)
             {
-                return null;
+                throw new NotFoundException(id);
             }
             return _mapper.Map<BookDetailsDto>(book);
         }
 
-        public async Task<Book?> AddBookAsync(Book book)
+        public async Task<Book> AddBookAsync(Book book)
         {
             book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
 
             var author = await _authorRepo.GetAuthorByIdAsync(book.AuthorId);
             if (author == null)
             {
-                return null;
+               throw new BadRequestException($"Author with ID {book.AuthorId} does not exist.");
             }
 
             var publisher = await _publisherRepo.GetPublisherByIdAsync(book.PublisherId);
             if (publisher == null)
             {
-                return null;
+                throw new BadRequestException($"Publisher with ID {book.PublisherId} does not exist.");
             }
             return await _bookRepo.AddBookAsync(book);
         }
 
-        public async Task<Book?> UpdateBookAsync(int id, Book book)
+        public async Task<Book> UpdateBookAsync(int id, Book book)
         {
             var existingBook = await _bookRepo.GetBookByIdAsync(id);
             if (existingBook == null)
             {
-                return null;
+                throw new NotFoundException(id);
             }
             book.Id = id;
             book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
             var author = await _authorRepo.GetAuthorByIdAsync(book.AuthorId);
             if (author == null)
             {
-                return null;
+                throw new BadRequestException($"Author with ID {book.AuthorId} does not exist.");
             }
             var publisher = await _publisherRepo.GetPublisherByIdAsync(book.PublisherId);
             if (publisher == null)
             {
-                return null;
+                throw new BadRequestException($"Publisher with ID {book.PublisherId} does not exist.");
             }
 
             existingBook.Title = book.Title;
@@ -86,9 +87,13 @@ namespace BookstoreApplication.Services
             return await _bookRepo.UpdateBookAsync(existingBook);
         }
 
-        public async Task<bool> DeleteBookAsync(int id)
+        public async Task DeleteBookAsync(int id)
         {
-            return await _bookRepo.DeleteBookAsync(id);
+            var success = await _bookRepo.DeleteBookAsync(id);
+            if (!success)
+            {
+                throw new NotFoundException(id);
+            }
         }
     }
 }
