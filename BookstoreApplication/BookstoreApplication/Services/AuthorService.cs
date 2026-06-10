@@ -1,20 +1,33 @@
-﻿using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
+﻿using AutoMapper;
+using BookstoreApplication.Models;
+using BookstoreApplication.Services.DTOs;
+using BookstoreApplication.Utils;
 
 namespace BookstoreApplication.Services
 {
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepo _authorRepo;
+        private readonly IMapper _mapper;
+        private const int PageSize = 10;
 
-        public AuthorService(IAuthorRepo authorRepo)
+        public AuthorService(IAuthorRepo authorRepo, IMapper mapper)
         {
             _authorRepo = authorRepo;
+            _mapper = mapper;
         }
 
         public async Task<List<Author>> GetAllAuthorsAsync()
         {
             return await _authorRepo.GetAllAuthorsAsync();
+        }
+
+        public async Task<PaginatedList<AuthorDTO>> GetAllAuthorsPagedAsync(int page)
+        {
+            var authors = await _authorRepo.GetAllAuthorsPagedAsync(page);
+            var dtos = authors.Items.Select(_mapper.Map<AuthorDTO>).ToList();
+
+            return new PaginatedList<AuthorDTO>(dtos, authors.Count, authors.PageIndex, PageSize);
         }
 
         public async Task<Author?> GetAuthorByIdAsync(int id)

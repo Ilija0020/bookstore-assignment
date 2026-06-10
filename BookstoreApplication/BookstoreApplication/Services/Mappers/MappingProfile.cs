@@ -8,6 +8,8 @@ namespace BookstoreApplication.Services.Mappers
     {
         public MappingProfile()
         {
+            CreateMap<Author, AuthorDTO>().ReverseMap();
+
             CreateMap<Book, BookDto>()
                 .ForMember(
                     dest => dest.Age,
