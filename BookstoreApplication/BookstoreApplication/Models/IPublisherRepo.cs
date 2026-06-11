@@ -1,4 +1,6 @@
-﻿namespace BookstoreApplication.Models
+﻿using BookstoreApplication.Utils;
+
+namespace BookstoreApplication.Models
 {
     public interface IPublisherRepo
     {
@@ -7,5 +9,7 @@
         Task<List<Publisher>> GetAllPublishersAsync();
         Task<Publisher?> GetPublisherByIdAsync(int id);
         Task<Publisher> UpdatePublisherAsync(Publisher publisher);
+        Task<IEnumerable<Publisher>> GetAllSortedAsync(int sortType);
+        public List<SortTypeOption> GetSortTypes();
     }
 }

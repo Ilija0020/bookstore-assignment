@@ -15,6 +15,8 @@ namespace BookstoreApplication.Services.Mappers
                     dest => dest.Age,
                     opt => opt.MapFrom(src => DateTime.Now.Year - src.PublishedDate.Year));
             CreateMap<Book, BookDetailsDto>();
+
+            CreateMap<Publisher, PublisherDTO>().ReverseMap();
         }
     }
 }

@@ -1,15 +1,20 @@
-﻿using BookstoreApplication.Models;
+﻿using AutoMapper;
+using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
+using BookstoreApplication.Services.DTOs;
+using BookstoreApplication.Utils;
 
 namespace BookstoreApplication.Services
 {
     public class PublisherService : IPublisherService
     {
         private readonly IPublisherRepo _publisherRepo;
+        private readonly IMapper _mapper;
 
-        public PublisherService(IPublisherRepo publisherRepo)
+        public PublisherService(IPublisherRepo publisherRepo, IMapper mapper)
         {
             _publisherRepo = publisherRepo;
+            _mapper = mapper;
         }
 
         public async Task<List<Publisher>> GetAllPublishersAsync()
@@ -48,6 +53,18 @@ namespace BookstoreApplication.Services
         public async Task<bool> DeletePublisherAsync(int id)
         {
             return await _publisherRepo.DeletePublisherAsync(id);
+        }
+
+        public async Task<IEnumerable<PublisherDTO>> GetAllSortedAsync(int sortType)
+        {
+            var publisher = await _publisherRepo.GetAllSortedAsync(sortType);
+
+            var dtos = publisher.Select(_mapper.Map<PublisherDTO>);
+            return dtos;
+        }
+        public List<SortTypeOption> GetSortTypes()
+        {
+            return _publisherRepo.GetSortTypes();
         }
     }
 }
