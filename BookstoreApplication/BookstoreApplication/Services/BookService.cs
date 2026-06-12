@@ -3,6 +3,8 @@ using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services.DTOs;
 using BookstoreApplication.Services.Exceptions;
+using BookstoreApplication.Utils;
+using System.Threading.Tasks;
 
 namespace BookstoreApplication.Services
 {
@@ -108,6 +110,18 @@ namespace BookstoreApplication.Services
                 throw new NotFoundException(id);
             }
             _logger.LogInformation("Book with ID {BookId} deleted successfully.", id);
+        }
+
+        public async Task<IEnumerable<BookDetailsDto>> GetAllSortedAsync(int sortType)
+        {
+            var books = await _bookRepo.GetAllSortedAsync(sortType);
+
+            return _mapper.Map<IEnumerable<BookDetailsDto>>(books);
+        }
+
+        public List<SortTypeOption> GetSortTypes()
+        {
+            return _bookRepo.GetSortTypes();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BookstoreApplication.Data;
 using BookstoreApplication.Models;
+using BookstoreApplication.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositories
@@ -54,6 +55,41 @@ namespace BookstoreApplication.Repositories
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public List<SortTypeOption> GetSortTypes()
+        {
+            List<SortTypeOption> options = new List<SortTypeOption>();
+            var enumValues = Enum.GetValues(typeof(BookSortType));
+            foreach (BookSortType sortType in enumValues)
+            {
+                options.Add(new SortTypeOption(sortType));
+            }
+            return options;
+        }
+
+        public async Task<IEnumerable<Book>> GetAllSortedAsync(int sortType)
+        {
+            IQueryable<Book> books = _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Publisher);
+
+            books = SortBooks(books, sortType);
+            return await books.ToListAsync();
+        }
+
+        private static IQueryable<Book> SortBooks(IQueryable<Book> books, int sortType)
+        {
+            return sortType switch
+            {
+                (int)BookSortType.TITLE_ASCENDING => books.OrderBy(b => b.Title),
+                (int)BookSortType.TITLE_DESCENDING => books.OrderByDescending(b => b.Title),
+                (int)BookSortType.PUBLISHED_DATE_ASCENDING => books.OrderBy(b => b.PublishedDate),
+                (int)BookSortType.PUBLISHED_DATE_DESCENDING => books.OrderByDescending(b => b.PublishedDate),
+                (int)BookSortType.AUTHOR_NAME_ASCENDING => books.OrderBy(b => b.Author!.FullName),
+                (int)BookSortType.AUTHOR_NAME_DESCENDING => books.OrderByDescending(b => b.Author!.FullName),
+                _ => books.OrderBy(b => b.Title)
+            };
         }
     }
 }

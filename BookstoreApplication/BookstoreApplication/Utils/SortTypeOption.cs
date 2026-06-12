@@ -12,5 +12,11 @@ namespace BookstoreApplication.Utils
             Key = (int)sortType;
             Name = sortType.ToString();
         }
+
+        public SortTypeOption(BookSortType sortType)
+        {
+            Key = (int)sortType;
+            Name = sortType.ToString();
+        }
     }
 }

@@ -24,6 +24,18 @@ namespace BookstoreApplication.Controllers
         {
             return Ok(await _bookService.GetAllBooksAsync());
         }
+        // GET api/books/sortTypes
+        [HttpGet("sortTypes")]
+        public IActionResult GetSortTypes()
+        {
+            return Ok(_bookService.GetSortTypes());
+        }
+        // GET api/books/sort?sortType=2
+        [HttpGet("sort")]
+        public async Task<IActionResult> GetSortedBooks([FromQuery] int sortType)
+        {
+            return Ok(await _bookService.GetAllSortedAsync(sortType));
+        }
 
         // GET api/books/5
         [HttpGet("{id}")]
