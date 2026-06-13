@@ -52,7 +52,7 @@ namespace BookstoreApplication.Services
             if (author == null)
             {
                 _logger.LogWarning("Failed to create book. Author with ID {AuthorId} does not exist.", book.AuthorId);
-               throw new BadRequestException($"Author with ID {book.AuthorId} does not exist.");
+                throw new BadRequestException($"Author with ID {book.AuthorId} does not exist.");
             }
 
             var publisher = await _publisherRepo.GetPublisherByIdAsync(book.PublisherId);
@@ -122,6 +122,13 @@ namespace BookstoreApplication.Services
         public List<SortTypeOption> GetSortTypes()
         {
             return _bookRepo.GetSortTypes();
+        }
+
+        public async Task<IEnumerable<BookDetailsDto>> GetAllFilteredAndSortedAsync(BookFilter filter, int sortType)
+        {
+            var books = await _bookRepo.GetAllFilteredAndSortedAsync(filter, sortType);
+            var dtos = books.Select(_mapper.Map<BookDetailsDto>).ToList();
+            return dtos;
         }
     }
 }

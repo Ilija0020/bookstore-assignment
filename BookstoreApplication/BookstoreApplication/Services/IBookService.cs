@@ -13,5 +13,6 @@ namespace BookstoreApplication.Services
         Task<Book> UpdateBookAsync(int id, Book book);
         Task<IEnumerable<BookDetailsDto>> GetAllSortedAsync(int sortType);
         List<SortTypeOption> GetSortTypes();
+        Task<IEnumerable<BookDetailsDto>> GetAllFilteredAndSortedAsync(BookFilter filter, int sortType);
     }
 }

@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Utils;
+﻿using BookstoreApplication.Services.DTOs;
+using BookstoreApplication.Utils;
 
 namespace BookstoreApplication.Models
 {
@@ -11,5 +12,6 @@ namespace BookstoreApplication.Models
         Task<Book> UpdateBookAsync(Book book);
         Task<IEnumerable<Book>> GetAllSortedAsync(int sortType);
         List<SortTypeOption> GetSortTypes();
+        Task<IEnumerable<Book>> GetAllFilteredAndSortedAsync(BookFilter filter, int sortType);
     }
 }

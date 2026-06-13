@@ -2,6 +2,7 @@ using BookstoreApplication.Data;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
+using BookstoreApplication.Services.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -35,6 +36,12 @@ namespace BookstoreApplication.Controllers
         public async Task<IActionResult> GetSortedBooks([FromQuery] int sortType)
         {
             return Ok(await _bookService.GetAllSortedAsync(sortType));
+        }
+        // POST api/books/filterAndSort?sortType=2
+        [HttpPost("filterAndSort")]
+        public async Task<IActionResult> GetFilteredAndSortedBooks([FromBody] BookFilter filter, [FromQuery] int sortType)
+        {
+            return Ok(await _bookService.GetAllFilteredAndSortedAsync(filter, sortType));
         }
 
         // GET api/books/5
