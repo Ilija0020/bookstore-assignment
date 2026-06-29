@@ -17,6 +17,10 @@ namespace BookstoreApplication.Services.Mappers
             CreateMap<Book, BookDetailsDto>();
 
             CreateMap<Publisher, PublisherDTO>().ReverseMap();
+
+            CreateMap<RegistrationDto, ApplicationUser>();
+
+            CreateMap<LoginDto, ApplicationUser>();
         }
     }
 }
