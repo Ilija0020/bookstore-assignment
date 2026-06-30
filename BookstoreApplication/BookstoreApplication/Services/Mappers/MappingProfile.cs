@@ -21,6 +21,8 @@ namespace BookstoreApplication.Services.Mappers
             CreateMap<RegistrationDto, ApplicationUser>();
 
             CreateMap<LoginDto, ApplicationUser>();
+
+            CreateMap<ApplicationUser, ProfileDto>();
         }
     }
 }
