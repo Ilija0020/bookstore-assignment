@@ -51,6 +51,8 @@ namespace BookstoreApplication.Services
                 string errorMessage = string.Join(";", result.Errors.Select(e => e.Description));
                 throw new BadRequestException(errorMessage);
             }
+
+            await _userManager.AddToRoleAsync(user, "Librarian");
         }
 
         public async Task<ProfileDto> GetProfile(ClaimsPrincipal userPrincipal)
@@ -81,6 +83,9 @@ namespace BookstoreApplication.Services
                 new Claim("username", user.UserName ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            claims.AddRange(roles.Select(role => new Claim("role", role)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -4,6 +4,7 @@ using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
 using BookstoreApplication.Services.Mappers;
+using BookstoreApplication.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -141,6 +142,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedData.InitializeAsync(services);
 }
 
 app.UseAuthentication();

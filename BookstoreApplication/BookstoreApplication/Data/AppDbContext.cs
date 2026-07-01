@@ -1,4 +1,5 @@
 ﻿using BookstoreApplication.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,11 @@ namespace BookstoreApplication.Data
                 .WithMany(publisher => publisher.Books)
                 .HasForeignKey(book => book.PublisherId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole { Name = "Librarian", NormalizedName = "LIBRARIAN" },
+                new IdentityRole { Name = "Editor", NormalizedName = "EDITOR" }
+                );
 
             // 1. Autori (5 komada)
             modelBuilder.Entity<Author>().HasData(
