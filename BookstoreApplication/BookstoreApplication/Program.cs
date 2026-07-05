@@ -3,6 +3,7 @@ using BookstoreApplication.Data;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
+using BookstoreApplication.Services.External;
 using BookstoreApplication.Services.Mappers;
 using BookstoreApplication.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -61,12 +62,18 @@ builder.Services.AddScoped<IAuthorRepo, AuthorRepo>();
 builder.Services.AddScoped<IPublisherRepo, PublisherRepo>();
 builder.Services.AddScoped<IBookRepo, BookRepo>();
 builder.Services.AddScoped<IAwardRepo, AwardRepo>();
+builder.Services.AddScoped<IIssueRepo, IssueRepo>();
 
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IPublisherService, PublisherService>();
 builder.Services.AddScoped<IAwardService, AwardService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IVolumeService, VolumeService>();
+builder.Services.AddScoped<IIssueService, IssueService>();
+builder.Services.AddScoped<IComicVineConnection, ComicVineConnection>();
+
+builder.Services.AddHttpClient<ComicVineConnection>();
 
 builder.Services.AddAutoMapper(cfg =>
 {

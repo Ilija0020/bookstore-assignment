@@ -31,6 +31,9 @@ namespace BookstoreApplication.Controllers.Middleware
             {
                 BadRequestException => StatusCodes.Status400BadRequest,
                 NotFoundException => StatusCodes.Status404NotFound,
+                RateLimitException => StatusCodes.Status429TooManyRequests,
+                UnauthorizedApiAccessException => StatusCodes.Status503ServiceUnavailable,
+                ApiCommunicationException => StatusCodes.Status503ServiceUnavailable,
                 _ => StatusCodes.Status500InternalServerError
             };
             var response = new
