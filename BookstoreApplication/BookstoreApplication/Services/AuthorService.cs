@@ -9,12 +9,14 @@ namespace BookstoreApplication.Services
     {
         private readonly IAuthorRepo _authorRepo;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
         private const int PageSize = 10;
 
-        public AuthorService(IAuthorRepo authorRepo, IMapper mapper)
+        public AuthorService(IAuthorRepo authorRepo, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _authorRepo = authorRepo;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<List<Author>> GetAllAuthorsAsync()
@@ -37,7 +39,9 @@ namespace BookstoreApplication.Services
 
         public async Task<Author> AddAuthorAsync(Author author)
         {
-            return await _authorRepo.AddAuthorAsync(author);
+            var result = await _authorRepo.AddAuthorAsync(author);
+            await _unitOfWork.SaveAsync();
+            return result;
         }
 
         public async Task<Author?> UpdateAuthorAsync(int id, Author author)
@@ -55,12 +59,22 @@ namespace BookstoreApplication.Services
             existingAuthor.Biography = author.Biography;
             existingAuthor.DateOfBirth = author.DateOfBirth;
 
-            return await _authorRepo.UpdateAuthorAsync(existingAuthor);
+            await _authorRepo.UpdateAuthorAsync(existingAuthor);
+            await _unitOfWork.SaveAsync();
+            return existingAuthor;
         }
 
         public async Task<bool> DeleteAuthorAsync(int id)
         {
-            return await _authorRepo.DeleteAuthorAsync(id);
+            bool deleted = await _authorRepo.DeleteAuthorAsync(id);
+
+            if (!deleted)
+            {
+                return false;
+            }
+
+            await _unitOfWork.SaveAsync();
+            return true;
         }
     }
 }

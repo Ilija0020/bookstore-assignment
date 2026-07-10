@@ -6,10 +6,12 @@ namespace BookstoreApplication.Services
     public class AwardService : IAwardService
     {
         private readonly IAwardRepo _awardRepo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AwardService(IAwardRepo awardRepo)
+        public AwardService(IAwardRepo awardRepo, IUnitOfWork unitOfWork)
         {
             _awardRepo = awardRepo;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<List<Award>> GetAllAwardsAsync()
@@ -24,7 +26,9 @@ namespace BookstoreApplication.Services
 
         public async Task<Award> AddAwardAsync(Award award)
         {
-            return await _awardRepo.AddAwardAsync(award);
+            var createdAward = await _awardRepo.AddAwardAsync(award);
+            await _unitOfWork.SaveAsync();
+            return createdAward;
         }
 
         public async Task<Award?> UpdateAwardAsync(int id, Award award)
@@ -43,12 +47,20 @@ namespace BookstoreApplication.Services
             existingAward.Description = award.Description;
             existingAward.StartYear = award.StartYear;
 
-            return await _awardRepo.UpdateAwardAsync(existingAward);
+            await _awardRepo.UpdateAwardAsync(existingAward);
+            await _unitOfWork.SaveAsync();
+            return existingAward;
         }
 
         public async Task<bool> DeleteAwardAsync(int id)
         {
-            return await _awardRepo.DeleteAwardAsync(id);
+            var deleted = await _awardRepo.DeleteAwardAsync(id);
+            if (!deleted)
+            {
+                return false;
+            }
+            await _unitOfWork.SaveAsync();
+            return true;
         }
     }
 }

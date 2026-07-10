@@ -58,11 +58,14 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 builder.Services.AddScoped<IAuthorRepo, AuthorRepo>();
 builder.Services.AddScoped<IPublisherRepo, PublisherRepo>();
 builder.Services.AddScoped<IBookRepo, BookRepo>();
 builder.Services.AddScoped<IAwardRepo, AwardRepo>();
 builder.Services.AddScoped<IIssueRepo, IssueRepo>();
+builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
 
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
@@ -72,6 +75,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IVolumeService, VolumeService>();
 builder.Services.AddScoped<IIssueService, IssueService>();
 builder.Services.AddScoped<IComicVineConnection, ComicVineConnection>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 builder.Services.AddHttpClient<ComicVineConnection>();
 

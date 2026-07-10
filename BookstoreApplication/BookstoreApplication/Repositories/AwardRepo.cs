@@ -23,18 +23,16 @@ namespace BookstoreApplication.Repositories
             return await _context.Awards.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<Award> AddAwardAsync(Award award)
+        public Task<Award> AddAwardAsync(Award award)
         {
             _context.Awards.Add(award);
-            await _context.SaveChangesAsync();
-            return award;
+            return Task.FromResult(award);
         }
 
-        public async Task<Award> UpdateAwardAsync(Award award)
+        public Task<Award> UpdateAwardAsync(Award award)
         {
             _context.Awards.Update(award);
-            await _context.SaveChangesAsync();
-            return award;
+            return Task.FromResult(award);
         }
 
         public async Task<bool> DeleteAwardAsync(int id)
@@ -45,7 +43,6 @@ namespace BookstoreApplication.Repositories
                 return false;
             }
             _context.Awards.Remove(award);
-            await _context.SaveChangesAsync();
             return true;
         }
     }

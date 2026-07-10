@@ -37,18 +37,16 @@ namespace BookstoreApplication.Repositories
             return await _context.Authors.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<Author> AddAuthorAsync(Author author)
+        public Task<Author> AddAuthorAsync(Author author)
         {
             _context.Authors.Add(author);
-            await _context.SaveChangesAsync();
-            return author;
+            return Task.FromResult(author);
         }
 
-        public async Task<Author> UpdateAuthorAsync(Author author)
+        public Task<Author> UpdateAuthorAsync(Author author)
         {
             _context.Authors.Update(author);
-            await _context.SaveChangesAsync();
-            return author;
+            return Task.FromResult(author);
         }
 
         public async Task<bool> DeleteAuthorAsync(int id)
@@ -59,7 +57,6 @@ namespace BookstoreApplication.Repositories
                 return false;
             }
             _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
             return true;
         }
     }

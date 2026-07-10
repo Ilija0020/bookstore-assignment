@@ -16,6 +16,12 @@ namespace BookstoreApplication.Services.Mappers
                     opt => opt.MapFrom(src => DateTime.Now.Year - src.PublishedDate.Year));
             CreateMap<Book, BookDetailsDto>();
 
+            CreateMap<SaveBookDTO, Book>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.AverageRating, opt => opt.Ignore())
+                .ForMember(dest => dest.Author, opt => opt.Ignore())
+                .ForMember(dest => dest.Publisher, opt => opt.Ignore());
+
             CreateMap<Publisher, PublisherDTO>().ReverseMap();
 
             CreateMap<RegistrationDto, ApplicationUser>();
@@ -25,6 +31,13 @@ namespace BookstoreApplication.Services.Mappers
             CreateMap<ApplicationUser, ProfileDto>();
 
             CreateMap<SaveIssueDTO, Issue>();
+
+            CreateMap<NewReviewDTO, Review>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.Book, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
         }
     }
 }

@@ -7,6 +7,7 @@
         public int PageCount { get; set; }
         public DateTime PublishedDate { get; set; }
         public required string ISBN { get; set; }
+        public double AverageRating { get; set; } = 0;
 
         public int AuthorId { get; set; }
         public Author? Author { get; set; }

@@ -56,22 +56,18 @@ namespace BookstoreApplication.Controllers
         // POST api/books
         [Authorize(Roles = "Editor, Librarian")]
         [HttpPost]
-        public async Task<IActionResult> PostAsync(Book book)
+        public async Task<IActionResult> PostAsync(SaveBookDTO bookDto)
         {
-           var createdBook = await _bookService.AddBookAsync(book);
+           var createdBook = await _bookService.AddBookAsync(bookDto);
            return Ok(createdBook);
         }
 
         // PUT api/books/5
         [Authorize(Roles = "Editor")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, Book book)
+        public async Task<IActionResult> PutAsync(int id, SaveBookDTO bookDto)
         {
-            if (id != book.Id)
-            {
-                return BadRequest("ID in path does not match ID in body.");
-            }
-            var updatedBook = await _bookService.UpdateBookAsync(id, book);
+            var updatedBook = await _bookService.UpdateBookAsync(id, bookDto);
             return Ok(updatedBook);
         }
 

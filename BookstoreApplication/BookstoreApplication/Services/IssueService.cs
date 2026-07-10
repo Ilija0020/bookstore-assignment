@@ -13,13 +13,15 @@ namespace BookstoreApplication.Services
         private readonly IConfiguration _configuration;
         private readonly IIssueRepo _issueRepo;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public IssueService(IComicVineConnection comicVineConnection, IConfiguration configuration, IIssueRepo issueRepo, IMapper mapper)
+        public IssueService(IComicVineConnection comicVineConnection, IConfiguration configuration, IIssueRepo issueRepo, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _comicVineConnection = comicVineConnection;
             _configuration = configuration;
             _issueRepo = issueRepo;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<List<IssueDTO>> SearchIssuesByVolumeId(int volumeId)
@@ -49,7 +51,9 @@ namespace BookstoreApplication.Services
 
             issue.CreatedAt = DateTime.UtcNow;
 
-            return await _issueRepo.AddIssueAsync(issue);
+            var result = await _issueRepo.AddIssueAsync(issue);
+            await _unitOfWork.SaveAsync();
+            return result;
         }
     }
 }

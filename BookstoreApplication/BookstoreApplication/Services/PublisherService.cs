@@ -10,11 +10,13 @@ namespace BookstoreApplication.Services
     {
         private readonly IPublisherRepo _publisherRepo;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PublisherService(IPublisherRepo publisherRepo, IMapper mapper)
+        public PublisherService(IPublisherRepo publisherRepo, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _publisherRepo = publisherRepo;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<List<Publisher>> GetAllPublishersAsync()
@@ -29,7 +31,9 @@ namespace BookstoreApplication.Services
 
         public async Task<Publisher> AddPublisherAsync(Publisher publisher)
         {
-            return await _publisherRepo.AddPublisherAsync(publisher);
+            var createdPublisher = await _publisherRepo.AddPublisherAsync(publisher);
+            await _unitOfWork.SaveAsync();
+            return createdPublisher;
         }
 
         public async Task<Publisher?> UpdatePublisherAsync(int id, Publisher publisher)
@@ -47,12 +51,21 @@ namespace BookstoreApplication.Services
             existingPublisher.Address = publisher.Address;
             existingPublisher.Website = publisher.Website;
 
-            return await _publisherRepo.UpdatePublisherAsync(existingPublisher);
+            await _publisherRepo.UpdatePublisherAsync(existingPublisher);
+            await _unitOfWork.SaveAsync();
+            return existingPublisher;
         }
 
         public async Task<bool> DeletePublisherAsync(int id)
         {
-            return await _publisherRepo.DeletePublisherAsync(id);
+            var deleted = await _publisherRepo.DeletePublisherAsync(id);
+
+            if (!deleted)
+            {
+                return false;
+            }
+            await _unitOfWork.SaveAsync();
+            return true;
         }
 
         public async Task<IEnumerable<PublisherDTO>> GetAllSortedAsync(int sortType)

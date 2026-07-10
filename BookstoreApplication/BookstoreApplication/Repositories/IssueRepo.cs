@@ -11,11 +11,10 @@ namespace BookstoreApplication.Repositories
         {
             _context = context;
         }
-        public async Task<Issue> AddIssueAsync(Issue issue)
+        public Task<Issue> AddIssueAsync(Issue issue)
         {
             _context.Issues.Add(issue);
-            await _context.SaveChangesAsync();
-            return issue;
+            return Task.FromResult(issue);
         }
 
     }

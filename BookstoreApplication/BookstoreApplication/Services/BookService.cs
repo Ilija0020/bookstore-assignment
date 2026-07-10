@@ -15,14 +15,16 @@ namespace BookstoreApplication.Services
         private readonly IPublisherRepo _publisherRepo;
         private readonly IMapper _mapper;
         private readonly ILogger<BookService> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BookService(IBookRepo bookRepo, IAuthorRepo authorRepo, IPublisherRepo publisherRepo, IMapper mapper, ILogger<BookService> logger)
+        public BookService(IBookRepo bookRepo, IAuthorRepo authorRepo, IPublisherRepo publisherRepo, IMapper mapper, ILogger<BookService> logger, IUnitOfWork unitOfWork)
         {
             _bookRepo = bookRepo;
             _authorRepo = authorRepo;
             _publisherRepo = publisherRepo;
             _mapper = mapper;
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<List<BookDto>> GetAllBooksAsync()
@@ -44,29 +46,33 @@ namespace BookstoreApplication.Services
             return _mapper.Map<BookDetailsDto>(book);
         }
 
-        public async Task<Book> AddBookAsync(Book book)
+        public async Task<Book> AddBookAsync(SaveBookDTO bookDto)
         {
-            book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
-
-            var author = await _authorRepo.GetAuthorByIdAsync(book.AuthorId);
+            var author = await _authorRepo.GetAuthorByIdAsync(bookDto.AuthorId);
             if (author == null)
             {
-                _logger.LogWarning("Failed to create book. Author with ID {AuthorId} does not exist.", book.AuthorId);
-                throw new BadRequestException($"Author with ID {book.AuthorId} does not exist.");
+                _logger.LogWarning("Failed to create book. Author with ID {AuthorId} does not exist.", bookDto.AuthorId);
+                throw new BadRequestException($"Author with ID {bookDto.AuthorId} does not exist.");
             }
 
-            var publisher = await _publisherRepo.GetPublisherByIdAsync(book.PublisherId);
+            var publisher = await _publisherRepo.GetPublisherByIdAsync(bookDto.PublisherId);
             if (publisher == null)
             {
-                _logger.LogWarning("Failed to create book. Publisher with ID {PublisherId} does not exist.", book.PublisherId);
-                throw new BadRequestException($"Publisher with ID {book.PublisherId} does not exist.");
+                _logger.LogWarning("Failed to create book. Publisher with ID {PublisherId} does not exist.", bookDto.PublisherId);
+                throw new BadRequestException($"Publisher with ID {bookDto.PublisherId} does not exist.");
             }
+
+            var book = _mapper.Map<Book>(bookDto);
+            book.PublishedDate = DateTime.SpecifyKind(bookDto.PublishedDate, DateTimeKind.Utc);
+            book.AverageRating = 0;
+
             var createdBook = await _bookRepo.AddBookAsync(book);
+            await _unitOfWork.SaveAsync();
             _logger.LogInformation("Book '{BookTitle}' created successfully with ID {BookId}.", createdBook.Title, createdBook.Id);
             return createdBook;
         }
 
-        public async Task<Book> UpdateBookAsync(int id, Book book)
+        public async Task<Book> UpdateBookAsync(int id, SaveBookDTO bookDto)
         {
             var existingBook = await _bookRepo.GetBookByIdAsync(id);
             if (existingBook == null)
@@ -74,29 +80,27 @@ namespace BookstoreApplication.Services
                 _logger.LogWarning("Failed to update book. Book with ID {BookId} was not found.", id);
                 throw new NotFoundException(id);
             }
-            book.Id = id;
-            book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
-            var author = await _authorRepo.GetAuthorByIdAsync(book.AuthorId);
+
+            var author = await _authorRepo.GetAuthorByIdAsync(bookDto.AuthorId);
             if (author == null)
             {
-                _logger.LogWarning("Failed to update book. Author with ID {AuthorId} does not exist.", book.AuthorId);
-                throw new BadRequestException($"Author with ID {book.AuthorId} does not exist.");
+                _logger.LogWarning("Failed to update book. Author with ID {AuthorId} does not exist.", bookDto.AuthorId);
+                throw new BadRequestException($"Author with ID {bookDto.AuthorId} does not exist.");
             }
-            var publisher = await _publisherRepo.GetPublisherByIdAsync(book.PublisherId);
+
+            var publisher = await _publisherRepo.GetPublisherByIdAsync(bookDto.PublisherId);
             if (publisher == null)
             {
-                _logger.LogWarning("Failed to update book. Publisher with ID {PublisherId} does not exist.", book.PublisherId);
-                throw new BadRequestException($"Publisher with ID {book.PublisherId} does not exist.");
+                _logger.LogWarning("Failed to update book. Publisher with ID {PublisherId} does not exist.", bookDto.PublisherId);
+                throw new BadRequestException($"Publisher with ID {bookDto.PublisherId} does not exist.");
             }
 
-            existingBook.Title = book.Title;
-            existingBook.PageCount = book.PageCount;
-            existingBook.PublishedDate = book.PublishedDate;
-            existingBook.ISBN = book.ISBN;
-            existingBook.AuthorId = book.AuthorId;
-            existingBook.PublisherId = book.PublisherId;
+            _mapper.Map(bookDto, existingBook);
+
+            existingBook.PublishedDate = DateTime.SpecifyKind(existingBook.PublishedDate, DateTimeKind.Utc);
 
             var updatedBook = await _bookRepo.UpdateBookAsync(existingBook);
+            await _unitOfWork.SaveAsync();
             _logger.LogInformation("Book with ID {BookId} updated successfully.", updatedBook.Id);
             return updatedBook;
         }
@@ -109,6 +113,7 @@ namespace BookstoreApplication.Services
                 _logger.LogWarning("Failed to delete book. Book with ID {BookId} was not found.", id);
                 throw new NotFoundException(id);
             }
+            await _unitOfWork.SaveAsync();
             _logger.LogInformation("Book with ID {BookId} deleted successfully.", id);
         }
 

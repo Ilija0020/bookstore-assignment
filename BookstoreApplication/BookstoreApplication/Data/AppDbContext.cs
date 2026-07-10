@@ -15,6 +15,7 @@ namespace BookstoreApplication.Data
         public DbSet<Award> Awards { get; set; }
         public DbSet<AuthorAward> AuthorAwards { get; set; }
         public DbSet<Issue> Issues { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,9 +50,21 @@ namespace BookstoreApplication.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole { Name = "Librarian", NormalizedName = "LIBRARIAN" },
-                new IdentityRole { Name = "Editor", NormalizedName = "EDITOR" }
+                new IdentityRole { Id = "2af1f570-ab74-4c16-a373-e7079629f808", Name = "Librarian", NormalizedName = "LIBRARIAN" },
+                new IdentityRole { Id = "4d04a1c6-1377-4430-80a6-60729967604b", Name = "Editor", NormalizedName = "EDITOR" }
                 );
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Book)
+                .WithMany()
+                .HasForeignKey(r => r.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // 1. Autori (5 komada)
             modelBuilder.Entity<Author>().HasData(

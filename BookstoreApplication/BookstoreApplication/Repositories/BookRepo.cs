@@ -32,18 +32,16 @@ namespace BookstoreApplication.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<Book> AddBookAsync(Book book)
+        public Task<Book> AddBookAsync(Book book)
         {
             _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-            return book;
+            return Task.FromResult(book);
         }
 
-        public async Task<Book> UpdateBookAsync(Book book)
+        public Task<Book> UpdateBookAsync(Book book)
         {
             _context.Books.Update(book);
-            await _context.SaveChangesAsync();
-            return book;
+            return Task.FromResult(book);
         }
 
         public async Task<bool> DeleteBookAsync(int id)
@@ -54,7 +52,6 @@ namespace BookstoreApplication.Repositories
                 return false;
             }
             _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
             return true;
         }
 

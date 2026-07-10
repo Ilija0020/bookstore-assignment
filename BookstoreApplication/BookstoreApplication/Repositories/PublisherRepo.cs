@@ -25,18 +25,16 @@ namespace BookstoreApplication.Repositories
             return await _context.Publishers.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<Publisher> AddPublisherAsync(Publisher publisher)
+        public Task<Publisher> AddPublisherAsync(Publisher publisher)
         {
             _context.Publishers.Add(publisher);
-            await _context.SaveChangesAsync();
-            return publisher;
+            return Task.FromResult(publisher);
         }
 
-        public async Task<Publisher> UpdatePublisherAsync(Publisher publisher)
+        public Task<Publisher> UpdatePublisherAsync(Publisher publisher)
         {
             _context.Publishers.Update(publisher);
-            await _context.SaveChangesAsync();
-            return publisher;
+            return Task.FromResult(publisher);
         }
 
         public async Task<bool> DeletePublisherAsync(int id)
@@ -47,7 +45,6 @@ namespace BookstoreApplication.Repositories
                 return false;
             }
             _context.Publishers.Remove(publisher);
-            await _context.SaveChangesAsync();
             return true;
         }
 
