@@ -28,6 +28,9 @@ namespace BookstoreApplication.Data
                 .Property(a => a.DateOfBirth)
                 .HasColumnName("Birthday");
 
+            modelBuilder.Entity<Author>()
+                .HasIndex(a => a.FullName);
+
             modelBuilder.Entity<AuthorAward>()
                 .HasKey(authorAward => new { authorAward.AuthorId, authorAward.AwardId });
 
