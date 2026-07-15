@@ -1,7 +1,10 @@
-﻿namespace BookstoreApplication.Services.External
+﻿using BookstoreApplication.Services.DTOs;
+
+namespace BookstoreApplication.Services.External
 {
     public interface IComicVineConnection
     {
-        Task<string> Get(string url);
+        Task<List<VolumeDTO>> SearchVolumesByName(string query);
+        Task<List<IssueDTO>> SearchIssuesByVolumeId(int volumeId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using BookstoreApplication.Services.DTOs;
 using BookstoreApplication.Services.Exceptions;
 using BookstoreApplication.Services.External;
 using System.Net;
@@ -10,13 +11,15 @@ namespace BookstoreApplication.Infrastructure.External.ComicVine
     {
         private readonly HttpClient _client;
         private readonly ILogger<ComicVineConnection> _logger;
+        private readonly IConfiguration _configuration;
 
-        public ComicVineConnection(HttpClient client, ILogger<ComicVineConnection> logger)
+        public ComicVineConnection(HttpClient client, ILogger<ComicVineConnection> logger, IConfiguration configuration)
         {
             _client = client;
             _logger = logger;
+            _configuration = configuration;
         }
-        public async Task<string> Get(string url)
+        private async Task<string> Get(string url)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.UserAgent.ParseAdd("BookstoreApplication");
@@ -35,6 +38,40 @@ namespace BookstoreApplication.Infrastructure.External.ComicVine
                 HandleUnsuccessfulRequest(response, jsonDocument, statusCode);
 
             return jsonDocument.RootElement.GetProperty("results").GetRawText();
+        }
+
+        public async Task<List<VolumeDTO>> SearchVolumesByName(string query)
+        {
+            var url = $"https://comicvine.gamespot.com/api/volumes" +
+                $"?api_key={_configuration["ComicVine:ApiKey"]}" +
+                $"&format=json" +
+                $"&filter=name:{Uri.EscapeDataString(query)}";
+
+            var json = await Get(url);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            return JsonSerializer.Deserialize<List<VolumeDTO>>(json, options) ?? new List<VolumeDTO>();
+        }
+
+        public async Task<List<IssueDTO>> SearchIssuesByVolumeId(int volumeId)
+        {
+            var url = $"https://comicvine.gamespot.com/api/issues" +
+                $"?api_key={_configuration["ComicVine:ApiKey"]}" +
+                $"&format=json" +
+                $"&filter=volume:{volumeId}";
+
+            var json = await Get(url);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            return JsonSerializer.Deserialize<List<IssueDTO>>(json, options) ?? new List<IssueDTO>();
         }
 
         private void HandleUnsuccessfulRequest(HttpResponseMessage response, JsonDocument jsonDocument, int statusCode)

@@ -5,22 +5,19 @@ using BookstoreApplication.Services.DTOs;
 using BookstoreApplication.Services.Exceptions;
 using BookstoreApplication.Services.External;
 using BookstoreApplication.Services.Interfaces;
-using System.Text.Json;
 
 namespace BookstoreApplication.Services
 {
     public class IssueService : IIssueService
     {
         private readonly IComicVineConnection _comicVineConnection;
-        private readonly IConfiguration _configuration;
         private readonly IIssueRepo _issueRepo;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public IssueService(IComicVineConnection comicVineConnection, IConfiguration configuration, IIssueRepo issueRepo, IMapper mapper, IUnitOfWork unitOfWork)
+        public IssueService(IComicVineConnection comicVineConnection, IIssueRepo issueRepo, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _comicVineConnection = comicVineConnection;
-            _configuration = configuration;
             _issueRepo = issueRepo;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
@@ -33,18 +30,7 @@ namespace BookstoreApplication.Services
                 throw new BadRequestException("Volume ID is required.");
             }
 
-            var url = $"https://comicvine.gamespot.com/api/issues" +
-                $"?api_key={_configuration["ComicVine:ApiKey"]}" +
-                $"&format=json" +
-                $"&filter=volume:{volumeId}";
-
-            var json = await _comicVineConnection.Get(url);
-            var options = new JsonSerializerOptions()
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            return JsonSerializer.Deserialize<List<IssueDTO>>(json, options)!;
+            return await _comicVineConnection.SearchIssuesByVolumeId(volumeId);
         }
 
         public async Task<Issue> AddIssueAsync(SaveIssueDTO issueDto)
