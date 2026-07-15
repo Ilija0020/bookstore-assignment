@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
-using BookstoreApplication.Models;
+using BookstoreApplication.Domain.Entities;
+using BookstoreApplication.Domain.Repositories;
 using BookstoreApplication.Services.DTOs;
 using BookstoreApplication.Services.Exceptions;
 using BookstoreApplication.Services.External;
+using BookstoreApplication.Services.Interfaces;
 using System.Text.Json;
 
 namespace BookstoreApplication.Services

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BookstoreApplication.Models;
+using BookstoreApplication.Domain.Entities;
 using BookstoreApplication.Services.DTOs;
 
 namespace BookstoreApplication.Services.Mappers

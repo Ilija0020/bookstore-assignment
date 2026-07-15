@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
-using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
+using BookstoreApplication.Domain.Common;
+using BookstoreApplication.Domain.Entities;
+using BookstoreApplication.Domain.Queries;
+using BookstoreApplication.Domain.Repositories;
 using BookstoreApplication.Services.DTOs;
 using BookstoreApplication.Services.Exceptions;
-using BookstoreApplication.Utils;
+using BookstoreApplication.Services.Interfaces;
 using System.Threading.Tasks;
 
 namespace BookstoreApplication.Services

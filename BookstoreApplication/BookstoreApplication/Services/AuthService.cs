@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using BookstoreApplication.Models;
+using BookstoreApplication.Domain.Entities;
 using BookstoreApplication.Services.DTOs;
 using BookstoreApplication.Services.Exceptions;
+using BookstoreApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

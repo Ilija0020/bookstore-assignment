@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
+using BookstoreApplication.Domain.Common;
+using BookstoreApplication.Domain.Entities;
+using BookstoreApplication.Domain.Repositories;
 using BookstoreApplication.Services.DTOs;
-using BookstoreApplication.Utils;
+using BookstoreApplication.Services.Interfaces;
 
 namespace BookstoreApplication.Services
 {

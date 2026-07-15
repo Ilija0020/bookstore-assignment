@@ -1,0 +1,27 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace BookstoreApplication.Infrastructure.Persistence.Sql.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddAuthorFullNameIndex : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateIndex(
+                name: "IX_Authors_FullName",
+                table: "Authors",
+                column: "FullName");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropIndex(
+                name: "IX_Authors_FullName",
+                table: "Authors");
+        }
+    }
+}

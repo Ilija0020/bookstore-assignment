@@ -1,6 +1,5 @@
-using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
-using BookstoreApplication.Services;
+using BookstoreApplication.Domain.Entities;
+using BookstoreApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

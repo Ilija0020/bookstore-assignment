@@ -1,7 +1,5 @@
-using BookstoreApplication.Data;
-using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
-using BookstoreApplication.Services;
+using BookstoreApplication.Domain.Queries;
+using BookstoreApplication.Services.Interfaces;
 using BookstoreApplication.Services.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
