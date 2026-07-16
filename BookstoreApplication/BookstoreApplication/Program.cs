@@ -3,6 +3,8 @@ using BookstoreApplication.Domain.Entities;
 using BookstoreApplication.Domain.Repositories;
 using BookstoreApplication.Infrastructure.External.ComicVine;
 using BookstoreApplication.Infrastructure.Identity;
+using BookstoreApplication.Infrastructure.Persistence.Mongo;
+using BookstoreApplication.Infrastructure.Persistence.Mongo.Repositories;
 using BookstoreApplication.Infrastructure.Persistence.Sql;
 using BookstoreApplication.Infrastructure.Persistence.Sql.Repositories;
 using BookstoreApplication.Services;
@@ -12,8 +14,10 @@ using BookstoreApplication.Services.Mappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
@@ -61,13 +65,34 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection(MongoDbSettings.SectionName));
+
+builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+{
+    var settings = serviceProvider
+        .GetRequiredService<IOptions<MongoDbSettings>>()
+        .Value;
+
+    return new MongoClient(settings.ConnectionString);
+});
+
+builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
+{
+    var client = serviceProvider.GetRequiredService<IMongoClient>();
+
+    var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+
+    return client.GetDatabase(settings.DatabaseName);
+});
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IAuthorRepo, AuthorRepo>();
 builder.Services.AddScoped<IPublisherRepo, PublisherRepo>();
 builder.Services.AddScoped<IBookRepo, BookRepo>();
 builder.Services.AddScoped<IAwardRepo, AwardRepo>();
-builder.Services.AddScoped<IIssueRepo, IssueRepo>();
+builder.Services.AddScoped<IIssueRepo, ComicNoSqlRepository>();
 builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
 
 builder.Services.AddScoped<IAuthorService, AuthorService>();
