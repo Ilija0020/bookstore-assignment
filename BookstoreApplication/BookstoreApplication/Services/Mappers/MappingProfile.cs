@@ -30,8 +30,6 @@ namespace BookstoreApplication.Services.Mappers
 
             CreateMap<ApplicationUser, ProfileDto>();
 
-            CreateMap<SaveIssueDTO, Issue>();
-
             CreateMap<NewReviewDTO, Review>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())

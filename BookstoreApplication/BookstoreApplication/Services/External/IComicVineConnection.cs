@@ -6,5 +6,6 @@ namespace BookstoreApplication.Services.External
     {
         Task<List<VolumeDTO>> SearchVolumesByName(string query);
         Task<List<IssueDTO>> SearchIssuesByVolumeId(int volumeId);
+        Task<ComicIssueDetailsDTO> GetIssueById(int issueId);
     }
 }

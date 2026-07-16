@@ -1,25 +1,32 @@
-﻿namespace BookstoreApplication.Services.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookstoreApplication.Services.DTOs
 {
     public class SaveIssueDTO
     {
-        public string Name { get; set; } = string.Empty;
-
-        public DateOnly? ReleaseDate { get; set; }
-
-        public string? IssueNumber { get; set; }
-
-        public string? ImagePath { get; set; }
-
-        public string? Description { get; set; }
-
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage = "External issue ID is required.")]
         public int ExternalIssueId { get; set; }
 
-        public int ExternalVolumeId { get; set; }
-
+        [Range(
+            1,
+            int.MaxValue,
+            ErrorMessage = "Page count must be greater than 0.")]
         public int PageCount { get; set; }
 
+        [Range(
+            typeof(decimal),
+            "0",
+            "79228162514264337593543950335",
+            ErrorMessage = "Price cannot be negative.")]
         public decimal Price { get; set; }
 
+        [Range(
+            0,
+            int.MaxValue,
+            ErrorMessage = "Available copies cannot be negative.")]
         public int AvailableCopies { get; set; }
     }
 }

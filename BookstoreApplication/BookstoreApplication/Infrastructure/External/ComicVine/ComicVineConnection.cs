@@ -9,6 +9,11 @@ namespace BookstoreApplication.Infrastructure.External.ComicVine
 {
     public class ComicVineConnection : IComicVineConnection
     {
+        private const string BaseUrl = "https://comicvine.gamespot.com/api";
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
         private readonly HttpClient _client;
         private readonly ILogger<ComicVineConnection> _logger;
         private readonly IConfiguration _configuration;
@@ -19,7 +24,7 @@ namespace BookstoreApplication.Infrastructure.External.ComicVine
             _logger = logger;
             _configuration = configuration;
         }
-        private async Task<string> Get(string url)
+        private async Task<string> GetResultsJson(string url)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.UserAgent.ParseAdd("BookstoreApplication");
@@ -34,7 +39,7 @@ namespace BookstoreApplication.Infrastructure.External.ComicVine
             if (!response.IsSuccessStatusCode)
                 HandleUnsuccessfulRequest(response, jsonDocument, statusCode);
 
-            if(statusCode != 1)
+            if (statusCode != 1)
                 HandleUnsuccessfulRequest(response, jsonDocument, statusCode);
 
             return jsonDocument.RootElement.GetProperty("results").GetRawText();
@@ -42,36 +47,31 @@ namespace BookstoreApplication.Infrastructure.External.ComicVine
 
         public async Task<List<VolumeDTO>> SearchVolumesByName(string query)
         {
-            var url = $"https://comicvine.gamespot.com/api/volumes" +
+            var url = $"{BaseUrl}/volumes" +
                 $"?api_key={_configuration["ComicVine:ApiKey"]}" +
                 $"&format=json" +
                 $"&filter=name:{Uri.EscapeDataString(query)}";
 
-            var json = await Get(url);
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            return JsonSerializer.Deserialize<List<VolumeDTO>>(json, options) ?? new List<VolumeDTO>();
+            return await GetAndDeserialize<List<VolumeDTO>>(url);
         }
 
         public async Task<List<IssueDTO>> SearchIssuesByVolumeId(int volumeId)
         {
-            var url = $"https://comicvine.gamespot.com/api/issues" +
+            var url = $"{BaseUrl}/issues" +
                 $"?api_key={_configuration["ComicVine:ApiKey"]}" +
                 $"&format=json" +
                 $"&filter=volume:{volumeId}";
 
-            var json = await Get(url);
+            return await GetAndDeserialize<List<IssueDTO>>(url);
+        }
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+        public async Task<ComicIssueDetailsDTO> GetIssueById(int issueId)
+        {
+            var url = $"{BaseUrl}/issue/4000-{issueId}/" +
+                $"?api_key={_configuration["ComicVine:ApiKey"]}" +
+                $"&format=json";
 
-            return JsonSerializer.Deserialize<List<IssueDTO>>(json, options) ?? new List<IssueDTO>();
+            return await GetAndDeserialize<ComicIssueDetailsDTO>(url);
         }
 
         private void HandleUnsuccessfulRequest(HttpResponseMessage response, JsonDocument jsonDocument, int statusCode)
@@ -100,6 +100,14 @@ namespace BookstoreApplication.Infrastructure.External.ComicVine
                     "Error occured when sending request to the external API." : errorMessage;
                 throw new ApiCommunicationException(apiError);
             }
+        }
+
+        private async Task<T> GetAndDeserialize<T>(string url)
+        {
+            var json = await GetResultsJson(url);
+
+            return JsonSerializer.Deserialize<T>(json, JsonOptions)
+              ?? throw new ApiCommunicationException("Comic Vine response could not be read.");
         }
     }
 }
